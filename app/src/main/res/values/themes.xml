@@ -1,0 +1,18 @@
+<resources>
+    <style name="Theme.RaraBoxPanel" parent="Theme.MaterialComponents.NoActionBar">
+        <item name="android:background">@color/dark_blue</item>
+        <item name="android:statusBarColor">@color/dark_blue</item>
+        <item name="android:navigationBarColor">@color/dark_blue</item>
+    </style>
+    <style name="Info">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">32sp</item>
+        <item name="android:fontFamily">@font/chillax</item>
+    </style>
+    <style name="Loader">
+        <item name="colorAccent">@color/white</item>
+    </style>
+    <style name="Refresh">
+        <item name="android:backgroundTint">@color/white</item>
+    </style>
+</resources>
