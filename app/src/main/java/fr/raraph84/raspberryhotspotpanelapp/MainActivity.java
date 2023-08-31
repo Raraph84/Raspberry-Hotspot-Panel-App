@@ -1,4 +1,4 @@
-package fr.raraph84.raraboxpanel;
+package fr.raraph84.raspberryhotspotpanelapp;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;

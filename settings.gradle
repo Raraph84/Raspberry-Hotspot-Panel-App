@@ -12,5 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "RaraBox Panel"
+
+rootProject.name = "Raspberry-Hotspot-Panel-App"
 include ':app'

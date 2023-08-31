@@ -1,5 +1,5 @@
 <resources>
-    <style name="Theme.RaraBoxPanel" parent="Theme.MaterialComponents.NoActionBar">
+    <style name="Theme.RaspberryHotspotPanelApp" parent="Theme.MaterialComponents.NoActionBar">
         <item name="android:background">@color/dark_blue</item>
         <item name="android:statusBarColor">@color/dark_blue</item>
         <item name="android:navigationBarColor">@color/dark_blue</item>

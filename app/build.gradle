@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace 'fr.raraph84.raraboxpanel'
+    namespace 'fr.raraph84.raspberryhotspotpanelapp'
     compileSdk 33
 
     defaultConfig {
-        applicationId "fr.raraph84.raraboxpanel"
+        applicationId "fr.raraph84.raspberryhotspotpanelapp"
         minSdk 24
         targetSdk 33
         versionCode 1

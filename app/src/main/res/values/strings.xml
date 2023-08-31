@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">RaraBox Panel</string>
+    <string name="app_name">Raspberry Hotspot Panel App</string>
     <string name="searching">Recherche de la box...</string>
     <string name="not_found">Box introuvable</string>
     <string name="refresh">Rafraichir</string>
