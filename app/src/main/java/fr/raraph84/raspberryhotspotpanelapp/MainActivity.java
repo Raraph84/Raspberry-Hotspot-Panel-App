@@ -51,10 +51,7 @@ public class MainActivity extends AppCompatActivity {
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.dark_blue, null));
         swipeRefreshLayout.setOnRefreshListener(() -> {
             swipeRefreshLayout.setRefreshing(true);
-            new Handler(getMainLooper()).postDelayed(() -> {
-                swipeRefreshLayout.setRefreshing(false);
-                webview.reload();
-            }, 500);
+            webview.reload();
         });
 
         webview.getSettings().setJavaScriptEnabled(true);
@@ -78,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
                 swipeRefreshLayout.setVisibility(WebView.VISIBLE);
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
