@@ -1,6 +1,5 @@
 package fr.raraph84.raspberryhotspotpanelapp;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -34,7 +33,6 @@ public class MainActivity extends AppCompatActivity {
     private TextView infoText;
     private Button refreshButton;
 
-    @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
