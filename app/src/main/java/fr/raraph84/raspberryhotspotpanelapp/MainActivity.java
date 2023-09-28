@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar loader;
     private TextView infoText;
     private Button refreshButton;
+    private StorageManager storageManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
         loader = findViewById(R.id.loader);
         infoText = findViewById(R.id.info);
         refreshButton = findViewById(R.id.refresh);
+        storageManager = new StorageManager(this);
 
         swipeRefreshLayout.setColorSchemeColors(getResources().getColor(R.color.dark_blue, null));
         swipeRefreshLayout.setOnRefreshListener(() -> {
@@ -104,6 +106,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             List<String> ips = new ArrayList<>();
+            if (storageManager.getLastIp() != null)
+                ips.add(storageManager.getLastIp());
             ips.add("panel.lan");
             for (NetworkInterface networkInterface : networkInterfaces)
                 for (InterfaceAddress address : networkInterface.getInterfaceAddresses())
@@ -131,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
                     if (found.get() || request.getResponseCode() != 200 || !request.getResponse().contains("Raspberry Pi Hotspot"))
                         return;
                     found.set(true);
+                    storageManager.setLastIp(ip);
                     new Handler(getMainLooper()).post(() -> webview.loadUrl("http://" + ip));
                 });
             }
