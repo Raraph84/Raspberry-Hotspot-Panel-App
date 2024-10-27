@@ -22,7 +22,8 @@ public class StorageManager {
     }
 
     public void setToken(String token) {
-        editor.putString(TOKEN_KEY, token);
+        if (token != null) editor.putString(TOKEN_KEY, token);
+        else editor.remove(TOKEN_KEY);
         editor.apply();
     }
 

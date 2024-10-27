@@ -1,5 +1,9 @@
 package fr.raraph84.raspberryhotspotpanelapp;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,13 +12,17 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpRequest {
 
     private final String url;
     private String method = "GET";
+    private JsonElement body;
     private String response;
     private int responseCode;
+    private final Map<String, String> headers = new HashMap<>();
 
     public HttpRequest(String url) {
         this.url = url;
@@ -29,11 +37,31 @@ public class HttpRequest {
         return this;
     }
 
+    public HttpRequest setBody(JsonElement body) {
+        this.body = body;
+        headers.put("Content-Type", "application/json");
+        return this;
+    }
+
+    public HttpRequest setHeader(String key, String value) {
+        headers.put(key, value);
+        return this;
+    }
+
     public void send() throws IOException {
 
         HttpURLConnection con = (HttpURLConnection) new URL(url.replaceAll(" ", "%20")).openConnection();
         con.setRequestMethod(method);
         con.setConnectTimeout(2000);
+
+        for (Map.Entry<String, String> header : headers.entrySet())
+            con.setRequestProperty(header.getKey(), header.getValue());
+
+        if (body != null) {
+            String message = new GsonBuilder().disableHtmlEscaping().serializeNulls().create().toJson(body);
+            con.setDoOutput(true);
+            con.getOutputStream().write(message.getBytes(StandardCharsets.UTF_8));
+        }
 
         responseCode = con.getResponseCode();
 
@@ -59,6 +87,14 @@ public class HttpRequest {
 
     public String getResponse() {
         return response;
+    }
+
+    public JsonElement getJsonResponse() {
+        try {
+            return new Gson().fromJson(response, JsonElement.class);
+        } catch (Exception error) {
+            return null;
+        }
     }
 
     public enum ResponseCodeType {

@@ -5,7 +5,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.webkit.*;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -73,9 +77,20 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageFinished(WebView view, String url) {
+
                 super.onPageFinished(view, url);
+
                 swipeRefreshLayout.setVisibility(WebView.VISIBLE);
                 swipeRefreshLayout.setRefreshing(false);
+
+                view.evaluateJavascript("localStorage.getItem('token');", (token) -> {
+
+                    if (token != null && testToken(token)) {
+                        storageManager.setToken(token);
+                    } else if (storageManager.getToken() != null && testToken(storageManager.getToken())) {
+                        view.evaluateJavascript("localStorage.setItem('token', '" + storageManager.getToken() + "');", null);
+                    }
+                });
             }
         });
 
@@ -88,6 +103,19 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (webview.canGoBack()) webview.goBack();
         else super.onBackPressed();
+    }
+
+    public boolean testToken(String token) {
+
+        HttpRequest request = new HttpRequest("http://" + storageManager.getLastIp() + ":8080/wifi/status");
+        request.setHeader("Authorization", token);
+        try {
+            request.send();
+        } catch (Exception exception) {
+            return false;
+        }
+
+        return request.getResponseCodeType() == HttpRequest.ResponseCodeType.SUCCESS;
     }
 
     public void search() {
@@ -106,8 +134,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             List<String> ips = new ArrayList<>();
-            if (storageManager.getLastIp() != null)
-                ips.add(storageManager.getLastIp());
+            if (storageManager.getLastIp() != null) ips.add(storageManager.getLastIp());
             ips.add("panel.lan");
             for (NetworkInterface networkInterface : networkInterfaces)
                 for (InterfaceAddress address : networkInterface.getInterfaceAddresses())
@@ -119,22 +146,28 @@ public class MainActivity extends AppCompatActivity {
             AtomicBoolean found = new AtomicBoolean(false);
             for (String ip : ips) {
                 pool.submit(() -> {
+
                     if (found.get()) return;
+
                     try {
                         InetAddress address = InetAddress.getByName(ip);
                         if (!address.isReachable(1000)) return;
                     } catch (Exception exception) {
                         throw new RuntimeException(exception);
                     }
+
                     HttpRequest request = new HttpRequest("http://" + ip);
                     try {
                         request.send();
                     } catch (Exception exception) {
                         return;
                     }
+
                     if (found.get() || request.getResponseCode() != 200 || !request.getResponse().contains("Raspberry Pi Hotspot"))
                         return;
+
                     found.set(true);
+
                     storageManager.setLastIp(ip);
                     new Handler(getMainLooper()).post(() -> webview.loadUrl("http://" + ip));
                 });
